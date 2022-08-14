@@ -32,6 +32,7 @@ jobs:
         with:
           filename: metrics.plugin.activity.svg
           token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
           base: ""
           plugin_activity: yes
           plugin_activity_limit: 5

@@ -26,6 +26,8 @@ jobs:
           base: header
           output_action: gist
           plugins_errors_fatal: yes
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: half-year
 
 
       - name: 📰 Recent activity
@@ -42,22 +44,6 @@ jobs:
           plugin_activity_limit: 5
           plugin_activity_days: 0
           plugin_activity_filter: issue, pr, release, fork, review, ref/create
-
-
-      - name: 👨‍💻 Lines of code changed
-        if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@master
-        with:
-          filename: metrics.plugin.lines.history.svg
-          token: ${{ secrets.METRICS_TOKEN }}
-          committer_gist: ${{ secrets.GIST_METRICS }}
-          base: ""
-          output_action: gist
-          plugins_errors_fatal: yes
-          plugin_lines: yes
-          plugin_lines_sections: repositories, history
-          plugin_lines_repositories_limit: 3
-          plugin_lines_history_limit: 1
 
 
       - name: 🎭 Comment Reactions

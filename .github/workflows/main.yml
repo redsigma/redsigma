@@ -240,18 +240,17 @@ jobs:
 #######
 ## Publish
 ######
-
-      - name: Publish examples
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Publish
         if: ${{ success() || failure() }}
         run: |
           set +e
-          ls -lah
           sudo mv /metrics_renders/* ./
-          ls -lah
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          
-# git pull
-# git add --all
-# git commit -m "update metrics"
-# git push --force
+          git pull
+          git add --all
+          git commit -m "update metrics"
+          git push --force

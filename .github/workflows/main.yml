@@ -34,8 +34,7 @@ jobs:
           filename: metrics.language.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
-          base: header
-          base_indepth: yes
+          base: ""
           config_order: languages
           output_action: gist
           plugin_languages: yes

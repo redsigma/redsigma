@@ -65,8 +65,8 @@ jobs:
           plugin_repositories: yes
           plugin_repositories_featured: >-
             redsigma/UPMetroSkin, 
-            redsigma/STP, 
-            redsigma/gmusic-player
+            redsigma/gmusic-player,
+            redsigma/STP
 
 
       - name: 📰 Recent activity

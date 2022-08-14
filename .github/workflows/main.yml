@@ -9,20 +9,15 @@ on:
   # Run action when pushing on these branches
   push: {branches: ["master", "main"]}
 
-env:
-  REPO_BRANCH: master
-  
 jobs:
   github-metrics:
     runs-on: ubuntu-latest
-    env:
-      REPO_BRANCH: master
     permissions:
       contents: write
     steps:
           
       - name: 🗃️ Base content - Default metrics
-        uses: lowlighter/metrics@'${REPO_BRANCH}'
+        uses: lowlighter/metrics@master
         with:
           filename: metrics.base.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -32,167 +27,167 @@ jobs:
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
-#       - name: 📰 Recent activity - Recent activity
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.activity.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           base: ""
-#           plugin_activity: yes
-#           plugin_activity_limit: 5
-#           plugin_activity_days: 0
-#           plugin_activity_filter: issue, pr, release, fork, review, ref/create
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 📰 Recent activity - Recent activity
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.activity.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          base: ""
+          plugin_activity: yes
+          plugin_activity_limit: 5
+          plugin_activity_days: 0
+          plugin_activity_filter: issue, pr, release, fork, review, ref/create
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
         
-#       - name: 👨‍💻 Lines of code changed - Repositories and diff history
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.lines.history.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           plugin_lines: yes
-#           plugin_lines_sections: repositories, history
-#           plugin_lines_repositories_limit: 3
-#           plugin_lines_history_limit: 1
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 👨‍💻 Lines of code changed - Repositories and diff history
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.lines.history.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_lines: yes
+          plugin_lines_sections: repositories, history
+          plugin_lines_repositories_limit: 3
+          plugin_lines_history_limit: 1
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
 
-#       - name: 📌 Starred topics - Icons
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.topics.icons.svg
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           token: NOT_NEEDED
-#           base: ""
-#           plugin_topics: yes
-#           plugin_topics_limit: 0
-#           plugin_topics_mode: icons
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 📌 Starred topics - Icons
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.topics.icons.svg
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          token: NOT_NEEDED
+          base: ""
+          plugin_topics: yes
+          plugin_topics_limit: 0
+          plugin_topics_mode: icons
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
         
-#       - name: 📜 Repository licenses - Licenses with open-source ratio graphs
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.licenses.ratio.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           template: repository
-#           repo: metrics
-#           plugin_licenses: yes
-#           plugin_licenses_setup: npm ci
-#           plugin_licenses_legal: no
-#           plugin_licenses_ratio: yes
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 📜 Repository licenses - Licenses with open-source ratio graphs
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.licenses.ratio.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          template: repository
+          repo: metrics
+          plugin_licenses: yes
+          plugin_licenses_setup: npm ci
+          plugin_licenses_legal: no
+          plugin_licenses_ratio: yes
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
 
-#       - name: 💡 Coding habits and activity - Midly interesting facts
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.habits.facts.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           plugin_habits: yes
-#           plugin_habits_facts: yes
-#           plugin_habits_charts: no
-#           config_timezone: Etc/UTC
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 💡 Coding habits and activity - Midly interesting facts
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.habits.facts.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_habits: yes
+          plugin_habits_facts: yes
+          plugin_habits_charts: no
+          config_timezone: Etc/UTC
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
 
-#       - name: 🎭 Comment reactions - Comment reactions
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.reactions.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           plugin_reactions: yes
-#           plugin_reactions_limit: 100
-#           plugin_reactions_details: percentage
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 🎭 Comment reactions - Comment reactions
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.reactions.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_reactions: yes
+          plugin_reactions_limit: 100
+          plugin_reactions_details: percentage
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
 
-#       - name: 🧑‍🤝‍🧑 People - Followers
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.people.followers.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           plugin_people: yes
-#           plugin_people_types: followers
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 🧑‍🤝‍🧑 People - Followers
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.people.followers.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_people: yes
+          plugin_people_types: followers
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
         
-# #       ####
-# #       ## Test
+#       ####
+#       ## Test
       
-#       - name: 🎩 Notable contributions - Indepth analysis
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.notable.indepth.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           plugin_notable: yes
-#           plugin_notable_indepth: yes
-#           plugin_notable_repositories: yes
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 🎩 Notable contributions - Indepth analysis
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.notable.indepth.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_notable: yes
+          plugin_notable_indepth: yes
+          plugin_notable_repositories: yes
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
 
-#       - name: 🏆 Achievements - Compact display
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.achievements.compact.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           plugin_achievements: yes
-#           plugin_achievements_only: >-
-#             polyglot, stargazer, sponsor, deployer, member, maintainer, developer,
-#             scripter, packager, explorer, infographile, manager
-#           plugin_achievements_display: compact
-#           plugin_achievements_threshold: X
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 🏆 Achievements - Compact display
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.achievements.compact.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_achievements: yes
+          plugin_achievements_only: >-
+            polyglot, stargazer, sponsor, deployer, member, maintainer, developer,
+            scripter, packager, explorer, infographile, manager
+          plugin_achievements_display: compact
+          plugin_achievements_threshold: X
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
 
-#       - name: 💫 Star lists - Featured star list languages
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.starlists.languages.svg
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           token: NOT_NEEDED
-#           base: ""
-#           plugin_starlists: yes
-#           plugin_starlists_languages: yes
-#           plugin_starlists_limit_languages: 8
-#           plugin_starlists_limit_repositories: 0
-#           plugin_starlists_only: Awesome
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 💫 Star lists - Featured star list languages
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.starlists.languages.svg
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          token: NOT_NEEDED
+          base: ""
+          plugin_starlists: yes
+          plugin_starlists_languages: yes
+          plugin_starlists_limit_languages: 8
+          plugin_starlists_limit_repositories: 0
+          plugin_starlists_only: Awesome
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}
 
-#       - name: 📆 Commit calendar - Full history calendar
-#         uses: lowlighter/metrics@$REPO_BRANCH
-#         with:
-#           filename: metrics.plugin.calendar.full.svg
-#           token: ${{ secrets.METRICS_TOKEN }}
-#           committer_gist: ${{ secrets.GIST_METRICS }}
-#           base: ""
-#           plugin_calendar: yes
-#           plugin_calendar_limit: 2
-#           output_action: gist
-#           plugins_errors_fatal: yes
-#         if: ${{ success() || failure() }}
+      - name: 📆 Commit calendar - Full history calendar
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.plugin.calendar.full.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_calendar: yes
+          plugin_calendar_limit: 2
+          output_action: gist
+          plugins_errors_fatal: yes
+        if: ${{ success() || failure() }}

@@ -9,6 +9,9 @@ on:
   # Run action when pushing on these branches
   push: {branches: ["master", "main"]}
 
+env:
+  REPO_BRANCH: master
+  
 jobs:
   github-metrics:
     runs-on: ubuntu-latest
@@ -17,7 +20,7 @@ jobs:
     steps:
           
       - name: 🗃️ Base content - Default metrics
-        uses: lowlighter/metrics@master
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.base.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -28,7 +31,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 📰 Recent activity - Recent activity
-        uses: lowlighter/metrics@master
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.activity.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -42,7 +45,7 @@ jobs:
         if: ${{ success() || failure() }}
         
       - name: 👨‍💻 Lines of code changed - Repositories and diff history
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.lines.history.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -57,7 +60,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 📌 Starred topics - Icons
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.topics.icons.svg
           committer_gist: ${{ secrets.GIST_METRICS }}
@@ -71,7 +74,7 @@ jobs:
         if: ${{ success() || failure() }}
         
       - name: 📜 Repository licenses - Licenses with open-source ratio graphs
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.licenses.ratio.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -88,7 +91,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 💡 Coding habits and activity - Midly interesting facts
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.habits.facts.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -103,7 +106,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 🎭 Comment reactions - Comment reactions
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.reactions.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -117,7 +120,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 🧑‍🤝‍🧑 People - Followers
-        uses: lowlighter/metrics@master
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.people.followers.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -133,7 +136,7 @@ jobs:
 #       ## Test
       
       - name: 🎩 Notable contributions - Indepth analysis
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.notable.indepth.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -147,7 +150,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 🏆 Achievements - Compact display
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.achievements.compact.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -164,7 +167,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 💫 Star lists - Featured star list languages
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.starlists.languages.svg
           committer_gist: ${{ secrets.GIST_METRICS }}
@@ -180,7 +183,7 @@ jobs:
         if: ${{ success() || failure() }}
 
       - name: 📆 Commit calendar - Full history calendar
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@${{ env.REPO_BRANCH }}
         with:
           filename: metrics.plugin.calendar.full.svg
           token: ${{ secrets.METRICS_TOKEN }}

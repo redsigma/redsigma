@@ -1,5 +1,5 @@
-<table>
-<tr><td valign="top">
+<table cellpadding="0">
+<tr style="padding: 0"><td valign="top">
       
 [<img alt="🦑" src="https://gist.githubusercontent.com/redsigma/6403d1af33500f2eef2dacdb5fdb212c/raw/metrics.base.svg">](#)
 [<img alt="🦑" src="https://gist.githubusercontent.com/redsigma/6403d1af33500f2eef2dacdb5fdb212c/raw/metrics.plugin.activity.svg">](#)

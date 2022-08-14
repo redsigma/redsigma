@@ -42,10 +42,12 @@ jobs:
             html, css, tex, less, dockerfile, makefile, qmake, lex, cmake, shell, 
             gnuplot, scala
           plugin_languages_colors: javascript:red, 0:blue, 1:#ff00aa
+          plugin_languages_aliases: javascript:JS typescript:TS
           plugin_languages_details: lines, bytes-size, percentage
           plugin_languages_sections: most-used, recently-used
           plugin_languages_indepth: yes
           plugin_languages_limit: 5
+          plugin_languages_threshold: 2%
  
         
         

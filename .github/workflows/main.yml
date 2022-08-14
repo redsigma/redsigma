@@ -4,7 +4,10 @@ name: Metrics
 on:
   # Schedule updates (each hour)
   schedule: [{cron: "0 * * * *"}]
+  # Allow manual run from action tab
   workflow_dispatch:
+  # Run action when pushing on these branches
+  push: {branches: ["master", "main"]}
 
 jobs:
   github-metrics:
@@ -24,7 +27,7 @@ jobs:
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.METRICS_TOKEN }}
           base: header
-          output_action: none
+          output_action: gist
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 

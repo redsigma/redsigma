@@ -18,6 +18,7 @@ jobs:
           filename: metrics.plugin.introduction.repository.svg
           token: ${{ secrets.METRICS_TOKEN }}
           template: repository
+          user: lowlighter
           repo: metrics
           base: header
           plugin_introduction: yes

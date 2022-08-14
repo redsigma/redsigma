@@ -22,7 +22,7 @@ jobs:
     steps:
           
       - name: 🗃️ Base content - Default metrics
-        uses: lowlighter/metrics@$REPO_BRANCH
+        uses: lowlighter/metrics@${REPO_BRANCH}
         with:
           filename: metrics.base.svg
           token: ${{ secrets.METRICS_TOKEN }}

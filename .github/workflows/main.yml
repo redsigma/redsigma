@@ -3,7 +3,7 @@
 name: Metrics
 on:
   # Schedule updates (each hour)
-  schedule: [{cron: "0 * * * *"}]
+  schedule: [{cron: "0 8 * * */15"}]
   # Allow manual run from action tab
   workflow_dispatch:
   # Run action when pushing on these branches

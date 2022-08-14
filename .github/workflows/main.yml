@@ -23,24 +23,23 @@ jobs:
           plugin_introduction: yes
           output_action: none
 #           delay: 120
-          user: lowlighter
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
         
-      - name: 🙋 Introduction 2 - Repository introduction
-        uses: lowlighter/metrics@latest
-        with:
-          filename: metrics.plugin.introduction.repository2.svg
-          token: ${{ secrets.METRICS_TOKEN }}
-          template: repository
-          repo: metrics
-          base: header
-          plugin_introduction: yes
-          output_action: none
-#           delay: 120
-          user: redsigma
-          plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
+#       - name: 🙋 Introduction 2 - Repository introduction
+#         uses: lowlighter/metrics@latest
+#         with:
+#           filename: metrics.plugin.introduction.repository2.svg
+#           token: ${{ secrets.METRICS_TOKEN }}
+#           template: repository
+#           repo: metrics
+#           base: header
+#           plugin_introduction: yes
+#           output_action: none
+# #           delay: 120
+#           user: redsigma
+#           plugins_errors_fatal: yes
+#         if: ${{ success() || failure() }}
 
 #       - name: 📰 Recent activity - Recent activity
 #         uses: lowlighter/metrics@master
@@ -245,10 +244,13 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           set +e
+          ls -lah
           sudo mv /metrics_renders/* ./
+          ls -lah
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git pull
-          git add --all
-          git commit -m "update metrics"
-          git push --force
+          
+# git pull
+# git add --all
+# git commit -m "update metrics"
+# git push --force

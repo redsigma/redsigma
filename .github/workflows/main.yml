@@ -236,3 +236,19 @@ jobs:
 #           user: lowlighter
 #           plugins_errors_fatal: yes
 #         if: ${{ success() || failure() }}
+
+#######
+## Publish
+######
+
+      - name: Publish examples
+        if: ${{ success() || failure() }}
+        run: |
+          set +e
+          sudo mv /metrics_renders/* ./
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull
+          git add --all
+          git commit -m "update metrics"
+          git push --force

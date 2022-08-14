@@ -53,7 +53,6 @@ jobs:
           plugin_lines_repositories_limit: 3
           plugin_lines_history_limit: 1
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
@@ -68,7 +67,6 @@ jobs:
           plugin_topics_limit: 0
           plugin_topics_mode: icons
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
         
@@ -86,7 +84,6 @@ jobs:
           plugin_licenses_legal: no
           plugin_licenses_ratio: yes
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
@@ -102,7 +99,6 @@ jobs:
           plugin_habits_charts: no
           config_timezone: Etc/UTC
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
@@ -117,7 +113,6 @@ jobs:
           plugin_reactions_limit: 100
           plugin_reactions_details: percentage
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
@@ -131,7 +126,6 @@ jobs:
           plugin_people: yes
           plugin_people_types: followers
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
         
@@ -149,7 +143,6 @@ jobs:
           plugin_notable_indepth: yes
           plugin_notable_repositories: yes
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
@@ -167,7 +160,6 @@ jobs:
           plugin_achievements_display: compact
           plugin_achievements_threshold: X
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
@@ -184,7 +176,6 @@ jobs:
           plugin_starlists_limit_repositories: 0
           plugin_starlists_only: Awesome
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
@@ -198,6 +189,5 @@ jobs:
           plugin_calendar: yes
           plugin_calendar_limit: 2
           output_action: gist
-          delay: 120
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}

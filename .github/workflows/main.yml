@@ -60,8 +60,8 @@ jobs:
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.topics.icons.svg
+          token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
-          token: NOT_NEEDED
           base: ""
           plugin_topics: yes
           plugin_topics_limit: 0
@@ -167,8 +167,8 @@ jobs:
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.starlists.languages.svg
+          token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
-          token: NOT_NEEDED
           base: ""
           plugin_starlists: yes
           plugin_starlists_languages: yes

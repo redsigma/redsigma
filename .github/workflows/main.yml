@@ -16,7 +16,8 @@ jobs:
       contents: write
     steps:
           
-      - name: 🗃️ Base content - Default metrics
+      - name: 🗃️ Info
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@master
         with:
           filename: metrics.base.svg
@@ -25,9 +26,9 @@ jobs:
           base: header
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
-        
-      - name: 🗃️ Base content - Languages
+
+
+      - name: 📓 Language Activity
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
@@ -49,10 +50,21 @@ jobs:
           plugin_languages_limit: 5
           plugin_languages_threshold: 2%
  
-        
-        
+
+      - name: 📌 Featured repositories
+        if: ${{ success() || failure() }}
+        uses: lowlighter/metrics@master
+        with:
+          filename: metrics.repos.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          plugin_repositories: yes
+          plugin_repositories_featured: redsigma/UPMetroSkin redsigma/STP redsigma/gmusic-player
+
 
       - name: 📰 Recent activity
+        if: ${{ success() || failure() }}      
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.activity.svg
@@ -65,9 +77,10 @@ jobs:
           plugin_activity_filter: issue, pr, release, fork, review, ref/create
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
-        
+
+
       - name: 👨‍💻 Lines of code changed
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.lines.history.svg
@@ -80,13 +93,13 @@ jobs:
           plugin_lines_history_limit: 1
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
 
         
       - name: 📜 Repository licenses
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@master
         with:
-          filename: metrics.plugin.licenses.ratio.svg
+          filename: metrics.plugin.licenses.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
           base: ""
@@ -98,10 +111,10 @@ jobs:
           plugin_licenses_ratio: yes
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
 
 
       - name: 🎭 Comment Reactions
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.reactions.svg
@@ -113,12 +126,13 @@ jobs:
           plugin_reactions_details: percentage
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
+
 
       - name: 🧑‍🤝‍🧑 Followers
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@master
         with:
-          filename: metrics.plugin.people.followers.svg
+          filename: metrics.plugin.followers.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
           base: ""
@@ -126,16 +140,13 @@ jobs:
           plugin_people_types: followers
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
-        
-#       ####
-#       ## Test
-      
 
-      - name: 🏆 Achievements - Compact display
+
+      - name: 🏆 Achievements
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@master
         with:
-          filename: metrics.plugin.achievements.compact.svg
+          filename: metrics.plugin.achievements.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
           base: ""
@@ -147,12 +158,13 @@ jobs:
           plugin_achievements_threshold: C
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
 
-      - name: 📆 Commit calendar - Full history calendar
+
+      - name: 📆 Commit calendar
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@master
         with:
-          filename: metrics.plugin.calendar.full.svg
+          filename: metrics.plugin.calendar.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
           base: ""
@@ -160,4 +172,3 @@ jobs:
           plugin_calendar_limit: 2
           output_action: gist
           plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}

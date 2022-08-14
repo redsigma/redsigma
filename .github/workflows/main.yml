@@ -51,7 +51,7 @@ jobs:
         
         
 
-      - name: 📰 Recent activity - Recent activity
+      - name: 📰 Recent activity
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.activity.svg
@@ -66,7 +66,7 @@ jobs:
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
         
-      - name: 👨‍💻 Lines of code changed - Repositories and diff history
+      - name: 👨‍💻 Lines of code changed
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.lines.history.svg
@@ -82,7 +82,7 @@ jobs:
         if: ${{ success() || failure() }}
 
         
-      - name: 📜 Repository licenses - Licenses with open-source ratio graphs
+      - name: 📜 Repository licenses
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.licenses.ratio.svg
@@ -114,7 +114,7 @@ jobs:
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
-      - name: 🧑‍🤝‍🧑 People - Followers
+      - name: 🧑‍🤝‍🧑 Followers
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.people.followers.svg
@@ -130,19 +130,6 @@ jobs:
 #       ####
 #       ## Test
       
-      - name: 🎩 Notable contributions - Indepth analysis
-        uses: lowlighter/metrics@master
-        with:
-          filename: metrics.plugin.notable.indepth.svg
-          token: ${{ secrets.METRICS_TOKEN }}
-          committer_gist: ${{ secrets.GIST_METRICS }}
-          base: ""
-          plugin_notable: yes
-          plugin_notable_indepth: yes
-          plugin_notable_repositories: yes
-          output_action: gist
-          plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
 
       - name: 🏆 Achievements - Compact display
         uses: lowlighter/metrics@master
@@ -156,7 +143,7 @@ jobs:
             polyglot, stargazer, sponsor, deployer, member, maintainer, developer,
             scripter, packager, explorer, infographile, manager
           plugin_achievements_display: compact
-          plugin_achievements_threshold: X
+          plugin_achievements_threshold: C
           output_action: gist
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}

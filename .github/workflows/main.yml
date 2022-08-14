@@ -99,22 +99,8 @@ jobs:
           plugins_errors_fatal: yes
         if: ${{ success() || failure() }}
 
-      - name: 💡 Coding habits and activity - Midly interesting facts
-        uses: lowlighter/metrics@master
-        with:
-          filename: metrics.plugin.habits.facts.svg
-          token: ${{ secrets.METRICS_TOKEN }}
-          committer_gist: ${{ secrets.GIST_METRICS }}
-          base: ""
-          plugin_habits: yes
-          plugin_habits_facts: yes
-          plugin_habits_charts: no
-          config_timezone: Etc/UTC
-          output_action: gist
-          plugins_errors_fatal: yes
-        if: ${{ success() || failure() }}
 
-      - name: 🎭 Comment reactions - Comment reactions
+      - name: 🎭 Comment Reactions
         uses: lowlighter/metrics@master
         with:
           filename: metrics.plugin.reactions.svg

@@ -15,11 +15,12 @@ jobs:
     permissions:
       contents: write
     steps:
-          
+
       - name: 🗃️ Info
         if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@master
+        uses: lowlighter/metrics@latest
         with:
+          use_prebuilt_image: yes
           filename: metrics.base.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
@@ -31,9 +32,10 @@ jobs:
 
 
       - name: 📰 Recent activity
-        if: ${{ success() || failure() }}      
-        uses: lowlighter/metrics@master
+        if: ${{ success() || failure() }}
+        uses: lowlighter/metrics@latest
         with:
+          use_prebuilt_image: yes
           filename: metrics.plugin.activity.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
@@ -48,8 +50,9 @@ jobs:
 
       - name: 🎭 Comment Reactions
         if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@master
+        uses: lowlighter/metrics@latest
         with:
+          use_prebuilt_image: yes
           filename: metrics.plugin.reactions.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
@@ -63,8 +66,9 @@ jobs:
 
       - name: 🧑‍🤝‍🧑 Followers
         if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@master
+        uses: lowlighter/metrics@latest
         with:
+          use_prebuilt_image: yes
           filename: metrics.plugin.followers.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}

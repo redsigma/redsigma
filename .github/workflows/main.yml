@@ -2,12 +2,17 @@
 # Interactive Editor: https://metrics.lecoq.io
 name: Metrics
 on:
-  # Schedule updates (each hour)
-  schedule: [{cron: "0 8 * * */15"}]
-  # Allow manual run from action tab
+
+  # Allow manual run
   workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * */15"
+
   # Run action when pushing on these branches
-  push: {branches: ["master", "main"]}
+  push: 
+    branches: 
+      - master
+      - main
 
 jobs:
   github-metrics:
@@ -17,8 +22,8 @@ jobs:
     steps:
 
       - name: 🗃️ Info
-        if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@latest
+        if: ${{ success() }}
+        uses: lowlighter/metrics@v3.24
         with:
           use_prebuilt_image: yes
           filename: metrics.base.svg
@@ -29,28 +34,71 @@ jobs:
           plugins_errors_fatal: yes
           plugin_isocalendar: yes
           plugin_isocalendar_duration: half-year
+    
+      # - name: 💻 Most used languages
+      #   if: ${{ success() }}
+      #   uses: lowlighter/metrics@v3.24
+      #   with:
+      #     use_prebuilt_image: yes
+      #     filename: metrics.plugin.mostlanguages.svg
+      #     token: ${{ secrets.METRICS_TOKEN }}
+      #     committer_gist: ${{ secrets.GIST_METRICS }}
+      #     base: ""
+      #     output_action: gist
+      #     plugin_languages: yes
+      #     plugin_languages_analysis_timeout: 15
+      #     plugin_languages_categories: markup,programming,data
+      #     plugin_languages_sections: most-used
+      #     plugin_languages_threshold: 3%
+      #     plugin_languages_limit: 8
+      #     plugin_languages_details: percentage
+      #     plugin_languages_colors: github, lua:blue, python:yellow
+      #     plugin_languages_ignored: >-
+      #       html, css, tex, less, dockerfile, makefile, qmake,
+      #       lex, cmake, gnuplot, Pip Requirements
+      #     plugin_languages_indepth: yes
+      #     plugin_languages_recent_categories: markup,programming,data
+      #     plugin_languages_recent_days: 90
+      #     plugin_languages_recent_load: 600
 
 
-      - name: 📰 Recent activity
-        if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@latest
-        with:
-          use_prebuilt_image: yes
-          filename: metrics.plugin.activity.svg
-          token: ${{ secrets.METRICS_TOKEN }}
-          committer_gist: ${{ secrets.GIST_METRICS }}
-          base: ""
-          output_action: gist
-          plugins_errors_fatal: yes
-          plugin_activity: yes
-          plugin_activity_limit: 5
-          plugin_activity_days: 0
-          plugin_activity_filter: issue, pr, release, fork, review, ref/create
+      # - name: 📀 Contributions
+      #   if: ${{ success() }}
+      #   uses: lowlighter/metrics@v3.24
+      #   with:
+      #     use_prebuilt_image: yes
+      #     filename: metrics.plugin.contributions.svg
+      #     token: ${{ secrets.METRICS_TOKEN }}
+      #     committer_gist: ${{ secrets.GIST_METRICS }}
+      #     base: ""
+      #     output_action: gist
+      #     plugin_notable: yes
+      #     plugin_notable_from: organization
+      #     plugin_notable_skipped: EventAccess/*
+      #     plugin_notable_types: commit,pull-request,issue
+
+      # # Disabled until gets fixed
+      # #
+      # # - name: 📰 Recent activity
+      # #   if: ${{ success() }}
+      # #   uses: EndBug/metrics@deb1c308cdceaf0431647ae50079abfc34b4415d
+      # #   with:
+      # #     use_prebuilt_image: yes
+      # #     filename: metrics.plugin.activity.svg
+      # #     token: ${{ secrets.METRICS_TOKEN }}
+      # #     committer_gist: ${{ secrets.GIST_METRICS }}
+      # #     base: ""
+      # #     output_action: gist
+      # #     plugins_errors_fatal: yes
+      # #     plugin_activity: yes
+      # #     plugin_activity_limit: 5
+      # #     plugin_activity_days: 0
+      # #     plugin_activity_filter: issue, pr, release, fork, review, ref/create
 
 
       - name: 🎭 Comment Reactions
-        if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@latest
+        if: ${{ success() }}
+        uses: lowlighter/metrics@v3.24
         with:
           use_prebuilt_image: yes
           filename: metrics.plugin.reactions.svg
@@ -65,8 +113,8 @@ jobs:
 
 
       - name: 🧑‍🤝‍🧑 Followers
-        if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@latest
+        if: ${{ success() }}
+        uses: lowlighter/metrics@v3.24
         with:
           use_prebuilt_image: yes
           filename: metrics.plugin.followers.svg
@@ -79,3 +127,209 @@ jobs:
           plugin_people_types: followers
           plugin_people_size: 32
 
+      - name: Processing metrics output
+        env:
+          GIST_ID:  ${{ secrets.GIST_METRICS }}
+          TOKEN:    ${{ secrets.METRICS_TOKEN }}
+          GROUPS: |
+            [
+              {
+                "outfile": "metrics.left.svg",
+                "files": [
+                  "metrics.plugin.activity.svg",
+                  "metrics.plugin.reactions.svg",
+                  "metrics.plugin.followers.svg"
+                ]
+              },
+              {
+                "outfile": "metrics.right.svg",
+                "files": [
+                  "metrics.plugin.mostlanguages.svg",
+                  "metrics.plugin.contributions.svg"
+                ]
+              }
+            ]
+        run: |
+          set -euo pipefail
+
+          sudo apt-get update -y
+          sudo apt-get install -y jq libxml2-utils
+
+          cat > stack_one.sh <<'BASH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          GIST_ID="$1"; TOKEN="$2"; OUTFILE="$3"; LISTFILE="$4"
+
+          curl -fsSL -H "Authorization: token $TOKEN" "https://api.github.com/gists/$GIST_ID" -o gist.json
+
+          get_raw()  { jq -r --arg f "$1" '.files[$f].raw_url // empty' gist.json; }
+          get_attr() { xmllint --xpath 'string(/*[local-name()="svg"]/@'"$1"')' "$2" 2>/dev/null || true; }
+
+          WIDTHS=(); HEIGHTS=(); VBS=(); INNER_PATHS=()
+          idx=0
+
+          while IFS= read -r F; do
+            [ -z "$F" ] && continue
+            RAW=$(get_raw "$F")
+            if [ -z "$RAW" ]; then
+              printf 'Missing in gist: %s\n' "$F"
+              exit 1
+            fi
+
+            SRC="src_$idx.svg"
+            curl -fsSL "$RAW" -o "$SRC"
+
+            VB=$(get_attr viewBox "$SRC")
+            if [ -n "$VB" ]; then
+              set -- $VB; W=$3; H=$4
+            else
+              WIDTH=$(get_attr width "$SRC");  HEIGHT=$(get_attr height "$SRC")
+              W=${WIDTH%px};  W=${W%%%};  [ -z "$W" ] && W=1024
+              H=${HEIGHT%px}; H=${H%%%}; [ -z "$H" ] && H=400
+            fi
+
+            WIDTHS+=("$W"); HEIGHTS+=("$H"); VBS+=("$VB")
+
+            INNER="inner_$idx.svg"
+            xmllint --xpath '/*[local-name()="svg"]/*' "$SRC" > "$INNER" 2>/dev/null || printf '' > "$INNER"
+            INNER_PATHS+=("$INNER")
+
+            idx=$((idx+1))
+          done < "$LISTFILE"
+
+          COUNT=${#WIDTHS[@]}
+          if [ "$COUNT" -eq 0 ]; then
+            printf 'No valid SVGs found for %s.\n' "$OUTFILE"
+            exit 1
+          fi
+
+          CW=0; CH=0
+          for i in $(seq 0 $((COUNT-1))); do
+            W=${WIDTHS[$i]}; H=${HEIGHTS[$i]}
+            GT=$(echo "$W > $CW" | bc -l)
+            if [ "$GT" -eq 1 ]; then CW=$W; fi
+            CH=$(echo "$CH + $H" | bc -l)
+          done
+
+          cat > merged.svg <<EOF
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 $CW $CH">
+          EOF
+
+          Y=0
+          for i in $(seq 0 $((COUNT-1))); do
+            W=${WIDTHS[$i]}
+            H=${HEIGHTS[$i]}
+            VB=${VBS[$i]}
+            INNER=${INNER_PATHS[$i]}
+
+            if [ -n "$VB" ]; then
+              cat >> merged.svg <<EOF
+            <svg x="0" y="$Y" viewBox="$VB" width="$W" height="$H">
+          EOF
+            else
+              cat >> merged.svg <<EOF
+            <svg x="0" y="$Y" width="$W" height="$H">
+          EOF
+            fi
+
+            cat "$INNER" >> merged.svg
+
+            cat >> merged.svg <<'EOF'
+            </svg>
+          EOF
+
+            Y=$(echo "$Y + $H" | bc -l)
+          done
+
+          cat >> merged.svg <<'EOF'
+          </svg>
+          EOF
+
+          jq -Rs --arg fn "$OUTFILE" '{files:{($fn):{content:.}}}' < merged.svg \
+          | curl -fsSL -X PATCH \
+              -H "Authorization: token $TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "Content-Type: application/json" \
+              -d @- \
+              "https://api.github.com/gists/$GIST_ID" >/dev/null
+
+          printf 'Finished %s\n' "$OUTFILE"
+          BASH
+          chmod +x stack_one.sh
+          # --- end reusable script ---
+
+          printf '%s' "$GROUPS" > groups.json
+          jq -c '.[]' groups.json | while IFS= read -r group; do
+            OUTFILE=$(printf '%s' "$group" | jq -r '.outfile')
+            printf '%s' "$group" | jq -r '.files[]' > files.txt
+
+            printf '→ Building %s from:\n' "$OUTFILE"
+            cat files.txt
+
+            ./stack_one.sh "$GIST_ID" "$TOKEN" "$OUTFILE" files.txt
+          done
+
+# RAW1=$(jq -r --arg f "$FILE1" '.files[$f].raw_url // empty' gist.json)
+# RAW2=$(jq -r --arg f "$FILE2" '.files[$f].raw_url // empty' gist.json)
+# [ -z "$RAW1" ] && echo "Missing file in gist: $FILE1" && exit 1
+# [ -z "$RAW2" ] && echo "Missing file in gist: $FILE2" && exit 1
+
+# # Download the two SVGs
+# curl -fsSL "$RAW1" -o a.svg
+# curl -fsSL "$RAW2" -o b.svg
+
+# A64=$(base64 -w0 a.svg)
+# B64=$(base64 -w0 b.svg)
+
+# get_attr() { xmllint --xpath 'string(/*[local-name()="svg"]/@'"$1"')' "$2" 2>/dev/null || true; }
+
+# VB1=$(get_attr viewBox a.svg)
+# VB2=$(get_attr viewBox b.svg)
+# if [ -n "$VB1" ]; then set -- $VB1; W1=$3; H1=$4; else
+#   WIDTH1=$(get_attr width a.svg); HEIGHT1=$(get_attr height a.svg)
+#   W1=${WIDTH1%px}; W1=${W1%%%}; [ -z "$W1" ] && W1=1024
+#   H1=${HEIGHT1%px}; H1=${H1%%%}; [ -z "$H1" ] && H1=400
+# fi
+# if [ -n "$VB2" ]; then set -- $VB2; W2=$3; H2=$4; else
+#   WIDTH2=$(get_attr width b.svg); HEIGHT2=$(get_attr height b.svg)
+#   W2=${WIDTH2%px}; W2=${W2%%%}; [ -z "$W2" ] && W2=1024
+#   H2=${HEIGHT2%px}; H2=${H2%%%}; [ -z "$H2" ] && H2=400
+# fi
+
+# CW=$(printf '%s\n' "$W1" "$W2" | sort -g | tail -1)
+# CH=$(echo "$H1 + $H2" | bc -l)
+
+# INNER1=$(xmllint --xpath '/*[local-name()="svg"]/*' a.svg 2>/dev/null || true)
+# INNER2=$(xmllint --xpath '/*[local-name()="svg"]/*' b.svg 2>/dev/null || true)
+
+# cat > merged.svg <<EOF
+# <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 $CW $CH">
+#   <svg x="0" y="0" ${VB1:+viewBox="$VB1"} width="$W1" height="$H1">
+#     $INNER1
+#   </svg>
+#   <svg x="0" y="$H1" ${VB2:+viewBox="$VB2"} width="$W2" height="$H2">
+#     $INNER2
+#   </svg>
+# </svg>
+# EOF
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# cat > merged.svg <<EOF
+# <svg xmlns="http://www.w3.org/2000/svg">
+#   <image id="img1" x="0" y="0" href="data:image/svg+xml;base64,$A64" />
+#   <image id="img2" x="0" y="800" href="data:image/svg+xml;base64,$B64" />
+# </svg>
+# EOF

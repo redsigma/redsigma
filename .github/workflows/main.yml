@@ -9,20 +9,18 @@ on:
     - cron: "0 8 1 * *"
 
   # Run action when pushing on these branches
-  push: 
-    branches: 
+  push:
+    branches:
       - master
       - main
 
 jobs:
-  github-metrics:
+  info:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-
       - name: 🗃️ Info
-        if: ${{ success() }}
         uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: yes
@@ -34,9 +32,13 @@ jobs:
           plugins_errors_fatal: yes
           plugin_isocalendar: yes
           plugin_isocalendar_duration: half-year
-    
+
+  languages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
       - name: 💻 Most used languages
-        if: ${{ success() }}
         uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: yes
@@ -58,9 +60,12 @@ jobs:
             lex, cmake, gnuplot, Pip Requirements, Rich Text Format, ReScript
           plugin_languages_skipped: redsigma/redsigma, redsigma/metrics
 
-
+  contributions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
       - name: 📀 Contributions
-        if: ${{ success() }}
         uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: yes
@@ -77,10 +82,13 @@ jobs:
           plugin_notable_repositories: yes
           plugin_notable_skipped: redsigma/redsigma, redsigma/metrics, EventAccess/*
 
-
+  activity:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
       - name: 📰 Recent activity
-        if: ${{ success() }}
-        uses: redsigma/metrics@master
+        uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: yes
           filename: metrics.plugin.activity.svg
@@ -90,17 +98,22 @@ jobs:
           output_action: gist
           plugins_errors_fatal: yes
           plugin_activity: yes
+          plugin_activity_show_empty: no
+          plugin_activity_commit_messages: yes
           plugin_activity_limit: 10
           plugin_activity_unique: true
           plugin_activity_load: 1000
           plugin_activity_days: 0
           plugin_activity_filter: push, issue, pr, release, review, ref/create, comment
-          plugin_activity_skipped: redsigma/redsigma
+          plugin_activity_skipped: redsigma/redsigma, redsigma/metrics
 
-
+  reactions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
       - name: 🎭 Comment Reactions
-        if: ${{ success() }}
-        uses: redsigma/metrics@master
+        uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: no
           filename: metrics.plugin.reactions.svg
@@ -114,9 +127,12 @@ jobs:
           plugin_reactions_details: count
           plugin_reactions_filter: reactions.count:>0
 
-
+  followers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
       - name: 🧑‍🤝‍🧑 Followers
-        if: ${{ success() }}
         uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: yes
@@ -130,6 +146,12 @@ jobs:
           plugin_people_types: followers
           plugin_people_size: 32
 
+  merge:
+    needs: [info, languages, contributions, activity, reactions, followers]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
       - name: Processing metrics output
         env:
           GIST_ID:  ${{ secrets.GIST_METRICS }}
@@ -156,7 +178,7 @@ jobs:
           set -euo pipefail
 
           sudo apt-get update -y
-          sudo apt-get install -y jq libxml2-utils
+          sudo apt-get install -y jq libxml2-utils bc
 
           cat > stack_one.sh <<'BASH'
           #!/usr/bin/env bash
@@ -248,15 +270,9 @@ jobs:
           </svg>
           EOF
 
-          jq -Rs --arg fn "$OUTFILE" '{files:{($fn):{content:.}}}' < merged.svg \
-          | curl -fsSL -X PATCH \
-              -H "Authorization: token $TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              -H "Content-Type: application/json" \
-              -d @- \
-              "https://api.github.com/gists/$GIST_ID" >/dev/null
-
-          printf 'Finished %s\n' "$OUTFILE"
+          mkdir -p merged
+          mv merged.svg "merged/$OUTFILE"
+          printf 'Prepared %s\n' "$OUTFILE"
           BASH
           chmod +x stack_one.sh
           # --- end reusable script ---
@@ -272,67 +288,18 @@ jobs:
             ./stack_one.sh "$GIST_ID" "$TOKEN" "$OUTFILE" files.txt
           done
 
-# RAW1=$(jq -r --arg f "$FILE1" '.files[$f].raw_url // empty' gist.json)
-# RAW2=$(jq -r --arg f "$FILE2" '.files[$f].raw_url // empty' gist.json)
-# [ -z "$RAW1" ] && echo "Missing file in gist: $FILE1" && exit 1
-# [ -z "$RAW2" ] && echo "Missing file in gist: $FILE2" && exit 1
+          jq -n '{files:{}}' > gist-payload.json
+          for FILE in metrics.left.svg metrics.right.svg; do
+            jq --arg name "$FILE" --rawfile content "merged/$FILE" \
+              '.files[$name] = {content: $content}' \
+              gist-payload.json > gist-payload.tmp
+            mv gist-payload.tmp gist-payload.json
+          done
 
-# # Download the two SVGs
-# curl -fsSL "$RAW1" -o a.svg
-# curl -fsSL "$RAW2" -o b.svg
-
-# A64=$(base64 -w0 a.svg)
-# B64=$(base64 -w0 b.svg)
-
-# get_attr() { xmllint --xpath 'string(/*[local-name()="svg"]/@'"$1"')' "$2" 2>/dev/null || true; }
-
-# VB1=$(get_attr viewBox a.svg)
-# VB2=$(get_attr viewBox b.svg)
-# if [ -n "$VB1" ]; then set -- $VB1; W1=$3; H1=$4; else
-#   WIDTH1=$(get_attr width a.svg); HEIGHT1=$(get_attr height a.svg)
-#   W1=${WIDTH1%px}; W1=${W1%%%}; [ -z "$W1" ] && W1=1024
-#   H1=${HEIGHT1%px}; H1=${H1%%%}; [ -z "$H1" ] && H1=400
-# fi
-# if [ -n "$VB2" ]; then set -- $VB2; W2=$3; H2=$4; else
-#   WIDTH2=$(get_attr width b.svg); HEIGHT2=$(get_attr height b.svg)
-#   W2=${WIDTH2%px}; W2=${W2%%%}; [ -z "$W2" ] && W2=1024
-#   H2=${HEIGHT2%px}; H2=${H2%%%}; [ -z "$H2" ] && H2=400
-# fi
-
-# CW=$(printf '%s\n' "$W1" "$W2" | sort -g | tail -1)
-# CH=$(echo "$H1 + $H2" | bc -l)
-
-# INNER1=$(xmllint --xpath '/*[local-name()="svg"]/*' a.svg 2>/dev/null || true)
-# INNER2=$(xmllint --xpath '/*[local-name()="svg"]/*' b.svg 2>/dev/null || true)
-
-# cat > merged.svg <<EOF
-# <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 $CW $CH">
-#   <svg x="0" y="0" ${VB1:+viewBox="$VB1"} width="$W1" height="$H1">
-#     $INNER1
-#   </svg>
-#   <svg x="0" y="$H1" ${VB2:+viewBox="$VB2"} width="$W2" height="$H2">
-#     $INNER2
-#   </svg>
-# </svg>
-# EOF
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# cat > merged.svg <<EOF
-# <svg xmlns="http://www.w3.org/2000/svg">
-#   <image id="img1" x="0" y="0" href="data:image/svg+xml;base64,$A64" />
-#   <image id="img2" x="0" y="800" href="data:image/svg+xml;base64,$B64" />
-# </svg>
-# EOF
+          # Remove temporary files created by the previous merge implementation.
+          curl --fail-with-body -sSL -X PATCH \
+              -H "Authorization: token $TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "Content-Type: application/json" \
+              -d @gist-payload.json \
+              "https://api.github.com/gists/$GIST_ID" >/dev/null

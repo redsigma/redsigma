@@ -6,7 +6,7 @@ on:
   # Allow manual run
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * */15"
+    - cron: "0 8 1 * *"
 
   # Run action when pushing on these branches
   push: 
@@ -23,7 +23,7 @@ jobs:
 
       - name: 🗃️ Info
         if: ${{ success() }}
-        uses: lowlighter/metrics@v3.24
+        uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: yes
           filename: metrics.base.svg
@@ -35,72 +35,74 @@ jobs:
           plugin_isocalendar: yes
           plugin_isocalendar_duration: half-year
     
-      # - name: 💻 Most used languages
-      #   if: ${{ success() }}
-      #   uses: lowlighter/metrics@v3.24
-      #   with:
-      #     use_prebuilt_image: yes
-      #     filename: metrics.plugin.mostlanguages.svg
-      #     token: ${{ secrets.METRICS_TOKEN }}
-      #     committer_gist: ${{ secrets.GIST_METRICS }}
-      #     base: ""
-      #     output_action: gist
-      #     plugin_languages: yes
-      #     plugin_languages_analysis_timeout: 15
-      #     plugin_languages_categories: markup,programming,data
-      #     plugin_languages_sections: most-used
-      #     plugin_languages_threshold: 3%
-      #     plugin_languages_limit: 8
-      #     plugin_languages_details: percentage
-      #     plugin_languages_colors: github, lua:blue, python:yellow
-      #     plugin_languages_ignored: >-
-      #       html, css, tex, less, dockerfile, makefile, qmake,
-      #       lex, cmake, gnuplot, Pip Requirements
-      #     plugin_languages_indepth: yes
-      #     plugin_languages_recent_categories: markup,programming,data
-      #     plugin_languages_recent_days: 90
-      #     plugin_languages_recent_load: 600
+      - name: 💻 Most used languages
+        if: ${{ success() }}
+        uses: redsigma/metrics@stable
+        with:
+          use_prebuilt_image: yes
+          filename: metrics.plugin.mostlanguages.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          output_action: gist
+          plugin_languages: yes
+          plugin_languages_analysis_timeout: 15
+          plugin_languages_categories: markup,programming,data
+          plugin_languages_sections: most-used
+          plugin_languages_threshold: 3%
+          plugin_languages_limit: 8
+          plugin_languages_details: percentage
+          plugin_languages_colors: github, lua:blue, python:yellow
+          plugin_languages_ignored: >-
+            html, css, tex, less, dockerfile, makefile, qmake,
+            lex, cmake, gnuplot, Pip Requirements, Rich Text Format, ReScript
+          plugin_languages_skipped: redsigma/redsigma, redsigma/metrics
 
 
-      # - name: 📀 Contributions
-      #   if: ${{ success() }}
-      #   uses: lowlighter/metrics@v3.24
-      #   with:
-      #     use_prebuilt_image: yes
-      #     filename: metrics.plugin.contributions.svg
-      #     token: ${{ secrets.METRICS_TOKEN }}
-      #     committer_gist: ${{ secrets.GIST_METRICS }}
-      #     base: ""
-      #     output_action: gist
-      #     plugin_notable: yes
-      #     plugin_notable_from: organization
-      #     plugin_notable_skipped: EventAccess/*
-      #     plugin_notable_types: commit,pull-request,issue
+      - name: 📀 Contributions
+        if: ${{ success() }}
+        uses: redsigma/metrics@stable
+        with:
+          use_prebuilt_image: yes
+          filename: metrics.plugin.contributions.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          output_action: gist
+          plugin_notable: yes
+          plugin_notable_from: all
+          plugin_notable_types: commit, pull-request, issue
+          plugin_notable_self: no
+          plugin_notable_filter: commits:>50
+          plugin_notable_repositories: yes
+          plugin_notable_skipped: redsigma/redsigma, redsigma/metrics, EventAccess/*
 
-      # # Disabled until gets fixed
-      # #
-      # # - name: 📰 Recent activity
-      # #   if: ${{ success() }}
-      # #   uses: EndBug/metrics@deb1c308cdceaf0431647ae50079abfc34b4415d
-      # #   with:
-      # #     use_prebuilt_image: yes
-      # #     filename: metrics.plugin.activity.svg
-      # #     token: ${{ secrets.METRICS_TOKEN }}
-      # #     committer_gist: ${{ secrets.GIST_METRICS }}
-      # #     base: ""
-      # #     output_action: gist
-      # #     plugins_errors_fatal: yes
-      # #     plugin_activity: yes
-      # #     plugin_activity_limit: 5
-      # #     plugin_activity_days: 0
-      # #     plugin_activity_filter: issue, pr, release, fork, review, ref/create
+
+      - name: 📰 Recent activity
+        if: ${{ success() }}
+        uses: redsigma/metrics@master
+        with:
+          use_prebuilt_image: yes
+          filename: metrics.plugin.activity.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_gist: ${{ secrets.GIST_METRICS }}
+          base: ""
+          output_action: gist
+          plugins_errors_fatal: yes
+          plugin_activity: yes
+          plugin_activity_limit: 10
+          plugin_activity_unique: true
+          plugin_activity_load: 1000
+          plugin_activity_days: 0
+          plugin_activity_filter: push, issue, pr, release, review, ref/create, comment
+          plugin_activity_skipped: redsigma/redsigma
 
 
       - name: 🎭 Comment Reactions
         if: ${{ success() }}
-        uses: lowlighter/metrics@v3.24
+        uses: redsigma/metrics@master
         with:
-          use_prebuilt_image: yes
+          use_prebuilt_image: no
           filename: metrics.plugin.reactions.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_gist: ${{ secrets.GIST_METRICS }}
@@ -109,12 +111,13 @@ jobs:
           plugins_errors_fatal: yes
           plugin_reactions: yes
           plugin_reactions_limit: 100
-          plugin_reactions_details: percentage
+          plugin_reactions_details: count
+          plugin_reactions_filter: reactions.count:>0
 
 
       - name: 🧑‍🤝‍🧑 Followers
         if: ${{ success() }}
-        uses: lowlighter/metrics@v3.24
+        uses: redsigma/metrics@stable
         with:
           use_prebuilt_image: yes
           filename: metrics.plugin.followers.svg
